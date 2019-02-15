@@ -1,0 +1,45 @@
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  vars:
+    security_group: MySecurityGroup-ansible-demo
+    region: eu-central-1
+    ami_id: ami-c86c3f23
+  tasks:
+  - name: Ensure a security group with correct ingress/egress rules are in place
+    ec2_group:
+      name: "{{ security_group }}"
+      description: My security group
+      region: "{{ region }}"
+      rules:
+        - proto: tcp
+          from_port: 80
+          to_port: 80
+          cidr_ip: 0.0.0.0/0
+        - proto: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 0.0.0.0/0
+        - proto: tcp
+          from_port: 443
+          to_port: 443
+          cidr_ip: 0.0.0.0/0
+
+  - name: Provision servers which are to be managed with Ansible
+    ec2:
+      key_name: my_key
+      region: "{{ region }}"
+      group: "{{ security_group }}"
+      instance_type: t2.micro
+#      instance_type: t2.xlarge
+      image: "{{ ami_id }}"
+      wait: true
+      exact_count: 1
+      count_tag:
+        identity: ansible-demo-machine
+      instance_tags:
+        identity: ansible-demo-machine
+    register: ec2instances
+
+
+

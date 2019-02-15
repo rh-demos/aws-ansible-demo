@@ -1,0 +1,30 @@
+---
+# tasks file for roles/ansible-demo-server
+- name: Create a demo repo dir
+  file:
+    path: /var/lib/awx/projects/demo
+    state: directory
+    group: awx
+    owner: awx
+    mode: 0755
+- name: Import the ping playbook
+  copy:
+    src: ping.yml
+    dest: /var/lib/awx/projects/demo/ping.yml
+    group: awx
+    owner: awx
+# tasks file for roles/ansible-demo-server
+- name: Create a demo repo dir for aws
+  file:
+    path: /var/lib/awx/projects/aws
+    state: directory
+    group: awx
+    owner: awx
+    mode: 0755
+- name: Import the provision playbook
+  copy:
+    src: provision.yml
+    dest: /var/lib/awx/projects/aws/provision.yml
+    group: awx
+    owner: awx
+
