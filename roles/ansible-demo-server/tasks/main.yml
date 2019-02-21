@@ -1,37 +1,16 @@
 ---
 # tasks file for roles/ansible-demo-server
-- name: Create a demo repo dir
-  file:
-    path: /var/lib/awx/projects/demo
-    state: directory
-    group: awx
-    owner: awx
-    mode: 0755
-- name: Import the ping playbook
-  copy:
-    src: ping.yml
-    dest: /var/lib/awx/projects/demo/ping.yml
-    group: awx
-    owner: awx
-# tasks file for roles/ansible-demo-server
-- name: Create a demo repo dir for aws
-  file:
-    path: /var/lib/awx/projects/aws
-    state: directory
-    group: awx
-    owner: awx
-    mode: 0755
-- name: Import the provision playbook
-  copy:
-    src: provision.yml
-    dest: /var/lib/awx/projects/aws/provision.yml
-    group: awx
-    owner: awx
 - name: Import the tower data
   copy:
     src: tower-backup-latest.tar.gz
     dest: /root
 - name: Read in initial data
-  command: sh setup.sh -e '/root/tower-backup-latest.tar.gz' -r
+  command: sh setup.sh -e 'restore_backup_file=/root/tower-backup-latest.tar.gz' -r
   args:
     chdir: /root/ansible-tower-setup-3.4.1-1
+- name: Create initial repos on awx server
+  unarchive:
+    src: projects.tar
+    dest: /var/lib/awx/projects/
+- name: Import nginx module
+  command: ansible-galaxy install -r /var/lib/awx/projects/demo/requirements.yml
