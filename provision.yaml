@@ -11,7 +11,6 @@
       name: "{{ security_group }}"
       description: My security group
       region: "{{ region }}"
-      ansible_password: "{{ ANSIBLE_PASSWORD }}"
       rules:
         - proto: tcp
           from_port: 80
@@ -56,6 +55,8 @@
   remote_user: ec2-user
   become: true
   become_method: sudo
+  vars:
+    ansible_pass: "{{ lookup('env', 'ANSIBLE_PASSWORD') }}"
   tasks:
   - name: Print IP addresses of regular systems
     debug:
@@ -81,17 +82,17 @@
     lineinfile:
       path: /root/ansible-tower-setup-3.4.1-1/inventory
       regexp: '^admin_password='
-      line: admin_password="{{ ansible_password }}"
+      line: admin_password="{{ ansible_pass }}"
   - name: Set db password
     lineinfile:
       path: /root/ansible-tower-setup-3.4.1-1/inventory
       regexp: '^pg_password='
-      line: pg_password="{{ ansible_password }}"
+      line: pg_password="{{ ansible_pass }}"
   - name: Set mq password
     lineinfile:
       path: /root/ansible-tower-setup-3.4.1-1/inventory
       regexp: '^rabbitmq_password='
-      line: rabbitmq_password="{{ ansible_password }}"
+      line: rabbitmq_password="{{ ansible_pass }}"
   - name: Install Ansible Tower
     command: sh setup.sh
     args:
