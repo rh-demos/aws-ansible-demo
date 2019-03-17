@@ -7,7 +7,8 @@
 - name: Read in initial data
   command: sh setup.sh -e 'restore_backup_file=/root/tower-backup-latest.tar.gz' -r
   args:
-    chdir: /root/ansible-tower-setup-3.4.1-1
+    chdir: /root/ansible-tower-setup-3.4.2-1
+  when: ansible_installed.stat.exists == False
 - name: Create initial repos on awx server
   unarchive:
     src: projects.tar

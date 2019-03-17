@@ -22,4 +22,4 @@ Some initial templates for provisioning servers at AWS are loaded initially. You
 | Amazon Web Services | aws provision | Default | Fill in access key and Secret key |
 | Machine | aws machine key | Default | Fill in ec2-user as user name, ssh private key, one which you've setup for the machine |
 
-After doing so, add aws provision creadentials to the template named 'provision aws machines' and to the source under the inventory 'aws demo machines'. Add the aws machine key to the template named 'ping servers'.
+After doing so, add aws provision credentials to the template named 'provision aws machines' and to the source under the inventory 'aws demo machines'. Add the aws machine key to the templates named 'ping servers', 'install nginx', and 'install tomcat'.

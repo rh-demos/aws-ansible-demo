@@ -75,29 +75,42 @@
     shell: "ssh-keyscan {{ hostvars[inventory_hostname].ansible_fqdn }} >> /home/ec2-user/.ssh/known_hosts"
   - name: Download and Extract the Ansible install file
     unarchive:
-      src: https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
+      src: https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-3.4.2-1.tar.gz
       dest: /root
       remote_src: true
   - name: Set admin password
     lineinfile:
-      path: /root/ansible-tower-setup-3.4.1-1/inventory
+      path: /root/ansible-tower-setup-3.4.2-1/inventory
       regexp: '^admin_password='
       line: admin_password="{{ ansible_pass }}"
   - name: Set db password
     lineinfile:
-      path: /root/ansible-tower-setup-3.4.1-1/inventory
+      path: /root/ansible-tower-setup-3.4.2-1/inventory
       regexp: '^pg_password='
       line: pg_password="{{ ansible_pass }}"
   - name: Set mq password
     lineinfile:
-      path: /root/ansible-tower-setup-3.4.1-1/inventory
+      path: /root/ansible-tower-setup-3.4.2-1/inventory
       regexp: '^rabbitmq_password='
       line: rabbitmq_password="{{ ansible_pass }}"
-#  - name: Install Ansible Tower
-#    command: sh setup.sh -i /root/ansible-tower-setup-3.4.1-1/inventory
-#    args:
-#      chdir: /root/ansible-tower-setup-3.4.1-1
-#      creates: install.log
+  - name: Check whether Ansible Tower has been installed
+    stat:
+      path: /root/ansible-tower-setup-3.4.2-1/installed.marker
+    register: ansible_installed
+  - name: Install Ansible Tower
+    command: sh setup.sh -i /root/ansible-tower-setup-3.4.2-1/inventory
+    args:
+      chdir: /root/ansible-tower-setup-3.4.2-1
+      creates: install.log
+    when: ansible_installed.stat.exists == False
+  - name: Create marker file, to mark that installation is done
+    copy:
+      content: ""
+      dest: /root/ansible-tower-setup-3.4.2-1/installed.marker
+      force: no
+      group: root
+      owner: root
+      mode: 0555
   - include_role:
       name: ansible-demo-server
 
